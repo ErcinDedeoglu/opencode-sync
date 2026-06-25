@@ -7,5 +7,6 @@
 
 import { OpencodeSyncPlugin } from './plugin/index.js';
 
-// Only export the plugin as default - OpenCode expects a single default export
-export default OpencodeSyncPlugin;
+// OpenCode 1.17.x expects a V1 PluginModule: { id?, server: Plugin }
+// Wrap the bare plugin function so the loader recognizes it.
+export default { id: 'oc-sync', server: OpencodeSyncPlugin };
