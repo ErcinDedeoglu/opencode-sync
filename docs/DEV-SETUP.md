@@ -22,17 +22,22 @@ npm run build
 
 ### 2. Register Plugin with OpenCode
 
-Create or edit `~/.config/opencode/opencode.json`:
+Requires OpenCode v2. Point the global config `~/.config/opencode/opencode.json(c)` at the plugin
+**directory** using the V2 `plugins` field:
 
-```json
+```jsonc
 {
-  "plugin": [
-    "file:///absolute/path/to/opencode-sync/dist/index.js"
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "/absolute/path/to/opencode-sync"
   ]
 }
 ```
 
-Replace `/absolute/path/to/opencode-sync` with the actual path to your cloned repo.
+Replace `/absolute/path/to/opencode-sync` with the actual path to your cloned repo. V2 loads local
+plugins from a directory/package (its `package.json`/`index.js`), not from `dist/index.js`
+directly. Alternatively, copy/symlink the built directory under `~/.config/opencode/plugins/` and
+it will be discovered automatically.
 
 ### 3. Set GitHub Token
 
@@ -45,7 +50,8 @@ The token needs `repo` scope to create and access the private sync repository.
 ### 4. Start OpenCode
 
 ```bash
-opencode
+opencode service restart
+opencode plugin list   # should list oc-sync
 ```
 
 ### 5. Verify Plugin Loaded
@@ -172,9 +178,10 @@ To rotate encryption keys without losing access to credentials:
 
 ### Plugin not loading
 
-1. Check `opencode.json` has correct absolute path to `dist/index.js`
+1. Confirm OpenCode v2 and that the global config uses `plugins` (plural) with an absolute path to the plugin directory
 2. Ensure `npm run build` completed successfully
-3. Check OpenCode logs: `~/.local/share/opencode/log/*.log`
+3. Run `opencode plugin list`; if `oc-sync` is missing, restart with `opencode service restart`
+4. Check OpenCode logs: `~/.local/share/opencode/log/*.log`
 
 ### "No configuration found"
 
@@ -188,4 +195,4 @@ Set `GITHUB_TOKEN` environment variable or create config file manually.
 ### Changes not reflecting
 
 1. Run `npm run build`
-2. Restart OpenCode completely (not just the TUI)
+2. Restart the OpenCode service: `opencode service restart` (the TUI is not enough)

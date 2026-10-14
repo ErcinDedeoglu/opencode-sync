@@ -1,5 +1,14 @@
 # Publishing to npm
 
+## Release lines
+
+- **`0.2.x`** targets **OpenCode v2** (V2 plugin API via `@opencode/plugin`, `{ id, setup }`).
+- **`0.1.x`** targets **OpenCode 1.x** (V1 plugin API, function export). Keep these installable for
+  older setups.
+
+V1 and V2 export different module shapes, so `0.2.0` is a **breaking** release for V1 users.
+Consider publishing `0.2.0` under a `next` dist-tag first, then promoting to `latest` once verified.
+
 ## Quick Command
 
 ```bash

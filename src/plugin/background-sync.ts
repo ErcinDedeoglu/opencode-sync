@@ -29,6 +29,13 @@ let syncInterval: NodeJS.Timeout | null = null;
 
 /** Start file watcher for continuous sync */
 export function startFileWatcher(pathConfig: PathConfig): void {
+  // Idempotent: dispose any existing watcher before starting a new one so
+  // repeated plugin loads/reloads do not stack file watchers.
+  if (activeWatcher) {
+    activeWatcher.stop();
+    activeWatcher = null;
+  }
+
   const state = getPluginState();
 
   if (!isContinuousSyncReady(state)) {
@@ -71,6 +78,13 @@ export function startFileWatcher(pathConfig: PathConfig): void {
 
 /** Start interval-based sync */
 export function startIntervalSync(pathConfig: PathConfig): void {
+  // Idempotent: clear any existing interval before starting a new one so
+  // repeated plugin loads/reloads do not stack timers.
+  if (syncInterval) {
+    clearInterval(syncInterval);
+    syncInterval = null;
+  }
+
   const state = getPluginState();
 
   if (!isContinuousSyncReady(state)) {

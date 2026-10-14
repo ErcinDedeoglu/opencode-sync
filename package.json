@@ -1,6 +1,6 @@
 {
   "name": "oc-sync",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "description": "Sync OpenCode data across machines using a private GitHub repository with vector clock conflict resolution",
   "type": "module",
   "exports": {
@@ -46,7 +46,7 @@
   "author": "Ercin Dedeoglu",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@opencode-ai/plugin": "latest",
+    "@opencode/plugin": "^2.0.28",
     "pako": "^2.1.0"
   },
   "devDependencies": {

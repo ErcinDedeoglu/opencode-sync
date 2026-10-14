@@ -11,44 +11,47 @@ You are helping the user install oc-sync, which syncs OpenCode data across machi
 
 ### Prerequisites Check
 Ask the user:
-1. "Do you have Node.js 18 or higher installed?" - If no, guide them to install from https://nodejs.org
-2. "Do you have a GitHub account?" - If no, guide them to create one at https://github.com
+1. "Do you have OpenCode v2 (2.0.28 or newer) installed?" - If no, guide them to install/upgrade; V1 users need oc-sync 0.1.x
+2. "Do you have Node.js 18 or higher installed?" - If no, guide them to install from https://nodejs.org
+3. "Do you have a GitHub account?" - If no, guide them to create one at https://github.com
 
-### Step 1: Install the Package
-IMPORTANT: The package must be installed in the OpenCode config directory, NOT globally.
+### Step 1: Install the Package (OpenCode v2)
+IMPORTANT: This release uses the OpenCode V2 plugin API and requires OpenCode v2 (2.0.28+).
+If the user runs OpenCode 1.x, they must use oc-sync 0.1.x instead.
 
-Determine the user's OS and run the appropriate command:
+Install the published package globally with the V2 CLI:
 
-**Linux/macOS:**
-cd ~/.config/opencode && npm install oc-sync
+opencode plugin add oc-sync@^0.2.0
 
-**Windows (PowerShell):**
-cd $HOME\.config\opencode; npm install oc-sync
-
-**Windows (Command Prompt):**
-cd %USERPROFILE%\.config\opencode && npm install oc-sync
-
-This installs the plugin where OpenCode can find it (in the config directory's node_modules/).
-
-NOTE: OpenCode uses XDG paths on ALL platforms. On Windows, this is NOT %APPDATA% - it's %USERPROFILE%\.config\opencode\.
+Alternatively, for a local build, point OpenCode at the built plugin directory
+(see docs/DEV-SETUP.md). V2 loads local plugins from a directory/package, not a single file.
 
 ### Step 2: Register the Plugin
-IMPORTANT: Installing the package is NOT enough. You must also register it.
+IMPORTANT: Installing the package may register it automatically; verify and, if needed, add it
+to the global config.
 
-Edit the opencode.json file in the config directory:
+Edit the global config file:
 
-**Linux/macOS:** ~/.config/opencode/opencode.json
-**Windows:** %USERPROFILE%\.config\opencode\opencode.json
+**Linux/macOS:** ~/.config/opencode/opencode.json(c)
+**Windows:** %USERPROFILE%\.config\opencode\opencode.json(c)
 
-Add the plugin array:
+Use the V2 "plugins" (plural) field:
 
 {
-  "plugin": ["oc-sync"]
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["oc-sync"]
 }
 
-NOTE: The key is "plugin" (singular), NOT "plugins" (plural).
+For a local build, use an absolute directory path:
 
-If opencode.json already exists with other settings, just add "oc-sync" to the existing plugin array.
+{
+  "plugins": ["/absolute/path/to/oc-sync"]
+}
+
+NOTE: In OpenCode V2 the key is "plugins" (plural). The V1 key "plugin" (singular) is NOT used by
+OpenCode v2. Plugin package directories placed directly under ~/.config/opencode/plugins/ are
+discovered automatically and do not need an explicit entry.
+
 
 ### Step 3: Generate GitHub Personal Access Token
 Guide the user step by step:
@@ -77,7 +80,15 @@ That's it! The plugin will automatically:
 - Detect the default branch (main/master)
 
 ### Step 5: Verify Installation
-Tell user to restart OpenCode. The plugin will:
+Tell user to restart OpenCode so the plugin loads:
+
+opencode service restart
+
+Then confirm it is active:
+
+opencode plugin list
+
+The plugin will:
 - Auto-create the sync repository if needed
 - Sync on startup
 - Watch for file changes
@@ -97,11 +108,11 @@ Expected output:
 ### Troubleshooting
 
 #### Plugin not loading (no log output)
-- Check plugin is installed in correct location:
-  - Linux/macOS: ls ~/.config/opencode/node_modules/oc-sync
-  - Windows: dir %USERPROFILE%\.config\opencode\node_modules\oc-sync
-- Check plugin is registered in opencode.json with "plugin" (singular) key
-- Check opencode.json is valid JSON (no trailing commas, etc.)
+- Check OpenCode is v2 and the plugin is listed: `opencode plugin list` (should show `oc-sync`)
+- Check the global config registers it under `plugins` (plural), not `plugin` (singular)
+- For a local build, confirm the config path is an absolute path to the plugin directory and that `npm run build` succeeded
+- Check the config file is valid JSON/JSONC (no stray commas, etc.)
+- Restart the service after changes: `opencode service restart`
 
 #### API Errors
 - "401 Unauthorized": Token is invalid or expired. Generate a new one.

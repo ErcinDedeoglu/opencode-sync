@@ -2,23 +2,35 @@
 
 ## Prerequisites
 
-The plugin must be installed in your OpenCode config directory:
+Requires **OpenCode v2** (2.0.28+). OpenCode 1.x users need `oc-sync@0.1.x` with the V1
+`"plugin"` (singular) config key.
+
+Install the plugin (published package):
 
 ```bash
-# Linux/macOS
-cd ~/.config/opencode && npm install oc-sync
-
-# Windows (PowerShell)
-cd $HOME\.config\opencode; npm install oc-sync
+opencode plugin add oc-sync@^0.2.0
 ```
 
-And registered in `opencode.json` (in config directory):
+Or use a local build directory (see [Development Setup](DEV-SETUP.md)). Register it in the global
+config `~/.config/opencode/opencode.json(c)` under the V2 **`plugins`** field:
 
-```json
+```jsonc
 {
-  "plugin": ["oc-sync"]
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["oc-sync"]
 }
 ```
+
+For a local build, use an absolute directory path:
+
+```jsonc
+{
+  "plugins": ["/absolute/path/to/oc-sync"]
+}
+```
+
+Plugin package directories under `~/.config/opencode/plugins/` are discovered automatically.
+After changing config or plugins, restart OpenCode (`opencode service restart`).
 
 See [Sync Paths](SYNC-PATHS.md) for platform-specific directory locations.
 

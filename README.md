@@ -12,29 +12,55 @@ Sync your OpenCode configuration, sessions, and data across multiple machines us
 - **Offline-Friendly** - Works offline, syncs when reconnected
 - **Atomic Updates** - Uses Git's compare-and-swap for safe concurrent access
 
-## Installation
+## Requirements
 
-**Step 1:** Install the package in your OpenCode config directory:
+- **OpenCode v2** (2.0.28 or newer). This release uses the V2 plugin API (`@opencode/plugin`).
+  For OpenCode 1.x, use `oc-sync@0.1.x` and the V1 `"plugin"` (singular) config key.
+- Node.js 18+
+- A GitHub Personal Access Token with `repo` scope
+
+## Installation (OpenCode v2)
+
+**Step 1:** Add the plugin. Either install the published package:
 
 ```bash
-# Linux/macOS
-cd ~/.config/opencode && npm install oc-sync
-
-# Windows (PowerShell)
-cd $HOME\.config\opencode; npm install oc-sync
+opencode plugin add oc-sync@^0.2.0
 ```
 
-**Step 2:** Register the plugin in `opencode.json` (in config directory):
+Or use a local build/clone (see [Development Setup](docs/DEV-SETUP.md)) and point OpenCode at its
+directory — V2 loads local plugins from a directory or package, not a single file.
 
-```json
+**Step 2:** Register the plugin in your global config `~/.config/opencode/opencode.json(c)` using the
+V2 **`plugins`** field:
+
+```jsonc
 {
-  "plugin": ["oc-sync"]
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["oc-sync"]
 }
 ```
 
-**Step 3:** Configure your GitHub token (see [Configuration](#configuration) below)
+For a local directory, use an absolute path:
 
-**Step 4:** Restart OpenCode
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["/absolute/path/to/oc-sync"]
+}
+```
+
+Plugin package directories placed directly under `~/.config/opencode/plugins/` are also discovered
+automatically.
+
+**Step 3:** Configure your GitHub token (see [Configuration](#configuration) below).
+
+**Step 4:** Restart OpenCode so the plugin loads:
+
+```bash
+opencode service restart
+```
+
+Verify it loaded with `opencode plugin list` — you should see `oc-sync`.
 
 Using an AI coding agent? See [LLM Installation Guide](docs/LLM-INSTALL.md) for step-by-step prompts.
 
@@ -112,6 +138,7 @@ See [Configuration Guide](docs/CONFIG.md) for all options.
 | [Sync Architecture](docs/SYNC.md) | Sync triggers, batching, data categories |
 | [Sync Paths](docs/SYNC-PATHS.md) | OpenCode file locations by platform |
 | [Development Setup](docs/DEV-SETUP.md) | Local development environment |
+| [OpenCode V2 Upgrade](docs/UPGRADE-OPENCODE-V2.md) | V1 → V2 plugin migration notes |
 | [Publishing](docs/PUBLISH.md) | npm release process |
 | [LLM Installation](docs/LLM-INSTALL.md) | Instructions for AI coding agents |
 | [TODO](docs/TODO.md) | Future improvements |

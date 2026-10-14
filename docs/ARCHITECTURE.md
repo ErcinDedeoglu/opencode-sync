@@ -21,7 +21,7 @@ OpenCode plugin integration.
 
 | File | Purpose |
 |------|---------|
-| `plugin.ts` | Plugin definition and hooks |
+| `plugin.ts` | Plugin definition (`Plugin.define`, OpenCode V2 API) |
 | `state-manager.ts` | Plugin state management |
 | `sync-handler.ts` | Sync operation handler |
 | `types.ts` | Plugin types |
